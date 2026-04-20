@@ -12,6 +12,14 @@ import {
     ArrowLeft,
     Check,
     Star,
+    ArrowUp,
+    Sun,
+    Moon,
+    Search,
+    User,
+    Menu,
+    ChevronDown,
+    ChevronRight,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -50,6 +58,8 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
     const [addingToCart, setAddingToCart] = useState(false);
     const [addedToCart, setAddedToCart] = useState(false);
     const [addingToWishlist, setAddingToWishlist] = useState(false);
+    const [isDarkMode, setIsDarkMode] = useState(true);
+    const [showStickyBar, setShowStickyBar] = useState(false);
 
     useEffect(() => {
         fetch(`/api/products/${slug}`)
