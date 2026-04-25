@@ -21,7 +21,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="dark">
-      <body className={`${inter.variable} font-sans antialiased bg-black text-white selection:bg-white/20 selection:text-white`}>
+      <body className={`${inter.variable} font-sans antialiased bg-[#1E1E1E] text-white selection:bg-white/20 selection:text-white`}>
         <CustomCursor />
         {children}
         <Toaster position="bottom-right" richColors />

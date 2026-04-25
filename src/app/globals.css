@@ -51,7 +51,7 @@
   --radius: 1rem;
   
   /* Black Background & Glassmorphism Defaults */
-  --background: oklch(0 0 0); /* Pure Black */
+  --background: #1E1E1E; /* Custom dark gray */
   --foreground: oklch(0.98 0 0); /* White */
   
   /* Glass panels - Heavy translucent black with extreme blur emulation */
@@ -91,7 +91,7 @@
 }
 
 .dark {
-  --background: oklch(0 0 0); /* Pure Black */
+  --background: #1E1E1E; /* Custom dark gray */
   --foreground: oklch(0.98 0 0); /* White */
   
   --card: oklch(1 1 1 / 5%);

@@ -40,7 +40,7 @@ export default async function HomePage() {
     const { featuredProducts, categories } = await getHomeData();
 
     return (
-        <div className="bg-black text-white min-h-screen w-full">
+        <div className="bg-[#1E1E1E] text-white min-h-screen w-full">
             {/* HERO SECTION - Dynamic Featured Products */}
             <HeroSection products={featuredProducts} />
 
@@ -64,7 +64,7 @@ export default async function HomePage() {
                             {categories.map((cat, idx) => (
                                 <div
                                     key={cat.id}
-                                    className="min-w-[85vw] sm:min-w-[400px] md:min-w-[480px] relative h-[450px] overflow-hidden rounded-[2.5rem] glass-panel border border-white/10 flex flex-col p-8 shadow-xl shrink-0 snap-center group"
+                                    className="min-w-[85vw] sm:min-w-[400px] md:min-w-[480px] relative h-[450px] overflow-hidden rounded-[2.5rem] bg-[#1E1E1E] glass-panel border border-white/10 flex flex-col p-8 shadow-xl shrink-0 snap-center group"
                                 >
                                     {/* Main Category Image Background */}
                                     {cat.image && (
@@ -76,7 +76,7 @@ export default async function HomePage() {
                                         <h3 className="font-bold text-3xl sm:text-4xl text-white mb-4 max-w-[65%] leading-tight drop-shadow-md">{cat.name}</h3>
                                         
                                         <Link href={`/products?category=${cat.slug}`}>
-                                            <Button className="rounded-full bg-white text-black hover:bg-white/90 px-8 py-6 text-sm font-bold transition-all shadow-lg mt-1 tracking-widest uppercase">
+                                            <Button className="rounded-full bg-blue-600 text-white hover:bg-blue-700 px-8 py-6 text-sm font-bold transition-all shadow-lg mt-1 tracking-widest">
                                                 Shop all
                                             </Button>
                                         </Link>
@@ -127,40 +127,40 @@ export default async function HomePage() {
                             </Link>
                         </div>
 
-                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-8 gap-y-16">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
                             {featuredProducts.map((product) => (
                                 <Link
                                     key={product.id}
                                     href={`/products/${product.slug}`}
-                                    className="group flex flex-col glass-panel rounded-2xl p-4 transition-transform duration-300 hover:-translate-y-2"
+                                    className="group flex flex-col bg-[#222222] border border-[#333333] rounded-[2rem] p-6 transition-all duration-300 hover:border-[#555555] hover:-translate-y-1 relative"
                                 >
-                                    <div className="aspect-[4/5] bg-secondary/50 rounded-xl overflow-hidden relative mb-6">
+                                    {product.compareAtPrice && product.compareAtPrice > product.price && (
+                                        <div className="absolute top-6 left-6 z-10 bg-[#FF3B30] text-white rounded-full text-xs font-bold px-3 py-1.5 shadow-lg">
+                                            Sale {Math.round((1 - product.price / product.compareAtPrice) * 100)}%
+                                        </div>
+                                    )}
+                                    <div className="aspect-[4/5] relative mb-6 flex items-center justify-center">
                                         {product.images[0] ? (
                                             <img
                                                 src={product.images[0]}
                                                 alt={product.name}
-                                                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                                                className="w-[80%] h-[80%] object-contain transition-transform duration-700 group-hover:scale-105 drop-shadow-2xl"
                                             />
                                         ) : (
                                             <div className="w-full h-full flex items-center justify-center">
-                                                <Package className="w-8 h-8 text-muted-foreground" />
-                                            </div>
-                                        )}
-                                        {product.compareAtPrice && (
-                                            <div className="absolute top-2 left-2 bg-primary/90 backdrop-blur-md text-primary-foreground rounded-full text-xs font-bold tracking-widest px-4 py-1.5 uppercase shadow-lg">
-                                                SALE
+                                                <Package className="w-8 h-8 text-neutral-600" />
                                             </div>
                                         )}
                                     </div>
-                                    <div>
-                                        <h3 className="font-bold text-foreground uppercase tracking-wide mb-2 line-clamp-1">
+                                    <div className="text-center mt-auto">
+                                        <h3 className="font-bold text-white text-lg mb-2 line-clamp-1">
                                             {product.name}
                                         </h3>
-                                        <div className="flex items-center gap-3">
-                                            <span className="font-semibold text-foreground">₹{product.price.toLocaleString("en-IN")}</span>
-                                            {product.compareAtPrice && (
-                                                <span className="text-muted-foreground line-through text-sm">₹{product.compareAtPrice.toLocaleString("en-IN")}</span>
+                                        <div className="flex items-center justify-center gap-2">
+                                            {product.compareAtPrice && product.compareAtPrice > product.price && (
+                                                <span className="text-[#888888] line-through text-sm font-medium">₹{product.compareAtPrice.toLocaleString("en-IN")}</span>
                                             )}
+                                            <span className="font-bold text-white">₹{product.price.toLocaleString("en-IN")}</span>
                                         </div>
                                     </div>
                                 </Link>
@@ -172,7 +172,7 @@ export default async function HomePage() {
 
             {/* PRODUCT BUNDLE / CATEGORY-WISE LIST */}
             {categories.length > 0 && (
-                <section className="py-16 md:py-24 relative bg-black text-white border-t border-white/10">
+                <section className="py-16 md:py-24 relative bg-[#1E1E1E] text-white border-t border-white/10">
                     <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
                         <div className="text-center mb-16">
                             <h2 className="text-4xl lg:text-5xl font-black uppercase tracking-tighter">
@@ -201,7 +201,7 @@ export default async function HomePage() {
                                                 <Link
                                                     key={product.id}
                                                     href={`/products/${product.slug}`}
-                                                    className="group flex flex-col bg-black glass-panel rounded-2xl p-4 transition-transform duration-300 hover:-translate-y-2 shadow-xl min-w-[160px] sm:min-w-[200px] md:min-w-[240px] shrink-0 snap-start"
+                                                    className="group flex flex-col bg-[#1E1E1E] glass-panel rounded-2xl p-4 transition-transform duration-300 hover:-translate-y-2 shadow-xl min-w-[160px] sm:min-w-[200px] md:min-w-[240px] shrink-0 snap-start"
                                                 >
                                                     <div className="aspect-[4/5] bg-secondary/30 rounded-xl overflow-hidden relative mb-4">
                                                         {product.images[0] ? (

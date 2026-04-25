@@ -37,7 +37,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     };
 
     return (
-        <div className="min-h-screen bg-black">
+        <div className="min-h-screen bg-[#1E1E1E]">
             {/* Mobile overlay */}
             {sidebarOpen && (
                 <div
@@ -124,7 +124,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 </header>
 
                 {/* Page content */}
-                <main className="p-6 bg-black">{children}</main>
+                <main className="p-6 bg-[#1E1E1E]">{children}</main>
             </div>
         </div>
     );

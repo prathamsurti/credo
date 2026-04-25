@@ -49,7 +49,7 @@ export default function CategoriesPage() {
             </div>
 
             {categories.length === 0 ? (
-                <div className="text-center py-24 glass-panel rounded-3xl mx-auto max-w-2xl bg-black/80">
+                <div className="text-center py-24 glass-panel rounded-3xl mx-auto max-w-2xl bg-[#1E1E1E]/80">
                     <FolderOpen className="w-16 h-16 mx-auto text-white/50 mb-4" />
                     <h3 className="text-xl font-bold text-white uppercase tracking-wider">No archives yet</h3>
                     <p className="text-white/50 mt-2">Check back soon for new pieces</p>
@@ -59,7 +59,7 @@ export default function CategoriesPage() {
                     {categories.map((cat, idx) => (
                         <div
                             key={cat.id}
-                            className="min-w-[85vw] sm:min-w-[400px] md:min-w-[480px] relative h-[450px] overflow-hidden rounded-[2.5rem] glass-panel bg-black border border-white/10 flex flex-col p-8 shadow-xl shrink-0 snap-center group hover:border-white/20 transition-all duration-500"
+                            className="min-w-[85vw] sm:min-w-[400px] md:min-w-[480px] relative h-[450px] overflow-hidden rounded-[2.5rem] glass-panel bg-[#1E1E1E] border border-white/10 flex flex-col p-8 shadow-xl shrink-0 snap-center group hover:border-white/20 transition-all duration-500"
                         >
                             <div className="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition-colors duration-500 z-10 backdrop-blur-[2px] group-hover:backdrop-blur-none" />
                             {cat.image ? (

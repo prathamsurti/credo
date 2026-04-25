@@ -31,6 +31,7 @@ export async function updateProduct(id: string, input: unknown) {
         minOrder: z.number().int().min(1).optional(),
         isActive: z.boolean().optional(),
         isFeatured: z.boolean().optional(),
+        bannerImage: z.string().optional().nullable(),
         tags: z.array(z.string()).optional(),
         images: z.array(z.string()).optional(),
     }).parse(input);

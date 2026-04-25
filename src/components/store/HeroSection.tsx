@@ -46,7 +46,7 @@ export default function HeroSection({ products }: { products: FeaturedProduct[] 
 
     if (!products || products.length === 0) {
         return (
-            <section className="relative min-h-screen w-full flex items-center justify-center overflow-hidden bg-black">
+            <section className="relative min-h-screen w-full flex items-center justify-center overflow-hidden bg-[#1E1E1E]">
                 <div className="absolute inset-0 z-0">
                     <img
                         src="https://images.unsplash.com/photo-1601593346740-925612772716?q=80&w=2560&auto=format&fit=crop"
@@ -81,7 +81,7 @@ export default function HeroSection({ products }: { products: FeaturedProduct[] 
     const currentProduct = products[currentIndex];
 
     return (
-        <section className="relative min-h-screen w-full flex items-center justify-center overflow-hidden bg-black">
+        <section className="relative min-h-screen w-full flex items-center justify-center overflow-hidden bg-[#1E1E1E]">
             {/* Background Image - Banner or Product Image */}
             <div className="absolute inset-0 z-0">
                 {currentProduct.bannerImage ? (
