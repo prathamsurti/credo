@@ -3,11 +3,14 @@
 import { useState, useEffect, useCallback, Suspense, useRef, useMemo } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { Search, SlidersHorizontal, Package, X, ArrowUp, Sun, Moon, ChevronRight, ChevronDown } from "lucide-react";
+import { useSession } from "next-auth/react";
+import { toast } from "sonner";
+import { Search, SlidersHorizontal, Package, X, ArrowUp, Sun, Moon, ChevronRight, ChevronDown, ShoppingCart } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
+import { addProductToGuestCart } from "@/lib/cart-client";
 
 interface Product {
     id: string;
@@ -16,6 +19,8 @@ interface Product {
     price: number;
     compareAtPrice: number | null;
     images: string[];
+    stock: number;
+    minOrder: number;
     category: { name: string; slug: string };
 }
 
@@ -28,6 +33,7 @@ interface Category {
 
 function ProductsContent() {
     const searchParams = useSearchParams();
+    const { data: session } = useSession();
     const [products, setProducts] = useState<Product[]>([]);
     const [categories, setCategories] = useState<Category[]>([]);
     const [loading, setLoading] = useState(true);
@@ -35,6 +41,7 @@ function ProductsContent() {
     const [filtersOpen, setFiltersOpen] = useState(false);
     const [isDarkMode, setIsDarkMode] = useState(true);
     const [showStickyBar, setShowStickyBar] = useState(false);
+    const [addingProductId, setAddingProductId] = useState<string | null>(null);
 
     const [search, setSearch] = useState(searchParams.get("search") || "");
     const [category, setCategory] = useState(searchParams.get("category") || "");
@@ -94,6 +101,46 @@ function ProductsContent() {
     };
 
     const hasFilters = search || category || sort !== "newest";
+
+    const handleAddToCart = async (product: Product) => {
+        setAddingProductId(product.id);
+        try {
+            const quantity = Math.max(1, product.minOrder || 1);
+
+            if (session?.user?.id) {
+                const res = await fetch("/api/cart", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ productId: product.id, quantity }),
+                });
+
+                if (!res.ok) {
+                    throw new Error("Failed to add product to cart");
+                }
+            } else {
+                addProductToGuestCart(
+                    {
+                        id: product.id,
+                        name: product.name,
+                        slug: product.slug,
+                        price: product.price,
+                        images: product.images,
+                        stock: product.stock,
+                        minOrder: product.minOrder,
+                    },
+                    quantity
+                );
+            }
+
+            toast.success("Added to cart");
+            window.dispatchEvent(new Event("cart:updated"));
+            window.dispatchEvent(new Event("cart:open"));
+        } catch {
+            toast.error("Could not add this item to cart");
+        } finally {
+            setAddingProductId(null);
+        }
+    };
 
     const observer = useRef<IntersectionObserver | null>(null);
     const lastProductElementRef = useCallback((node: HTMLDivElement | null) => {
@@ -211,8 +258,8 @@ function ProductsContent() {
                                 key={product.id}
                                 ref={idx === products.length - 1 ? lastProductElementRef : null}
                             >
-                                <Link href={`/products/${product.slug}`}>
-                                    <div className="group cursor-pointer">
+                                <div className="group">
+                                    <Link href={`/products/${product.slug}`} className="block cursor-pointer">
                                         {/* Product Image */}
                                         <div className={`aspect-square rounded-2xl overflow-hidden mb-6 ${isDarkMode ? 'bg-[#222]' : 'bg-gray-100'}`}>
                                             {product.images[0] ? (
@@ -250,8 +297,21 @@ function ProductsContent() {
                                                 )}
                                             </div>
                                         </div>
-                                    </div>
-                                </Link>
+                                    </Link>
+
+                                    <Button
+                                        onClick={() => handleAddToCart(product)}
+                                        disabled={addingProductId === product.id || product.stock <= 0}
+                                        className="mt-4 w-full rounded-full font-bold uppercase tracking-wide"
+                                    >
+                                        <ShoppingCart className="w-4 h-4 mr-2" />
+                                        {product.stock <= 0
+                                            ? "Out of stock"
+                                            : addingProductId === product.id
+                                                ? "Adding..."
+                                                : "Add to cart"}
+                                    </Button>
+                                </div>
                             </div>
                         ))}
                     </div>

@@ -12,7 +12,6 @@ import {
     LogOut,
     Package,
     ChevronDown,
-    ShoppingBag,
     Gift,
     Smartphone
 } from "lucide-react";
@@ -34,6 +33,7 @@ import {
     SheetTrigger,
 } from "@/components/ui/sheet";
 import { Badge } from "@/components/ui/badge";
+import { CartSheet } from "@/components/store/CartSheet";
 
 export default function StoreNavbar() {
     const pathname = usePathname();
@@ -164,13 +164,11 @@ export default function StoreNavbar() {
                                 </Link>
                             )}
 
-                            <Link href="/cart" className="relative text-white hover:text-blue-400 transition-colors group">
-                                <ShoppingBag className="w-5 h-5" />
-                                {/* Cart Badge */}
-                                <span className="absolute -top-2 -right-2.5 bg-blue-600 text-white text-[10px] font-bold h-4 min-w-[16px] px-1 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform">
-                                    0
-                                </span>
-                            </Link>
+                            <CartSheet
+                                triggerClassName="text-white hover:text-blue-400 group"
+                                iconClassName="w-5 h-5"
+                                badgeClassName="group-hover:scale-110 transition-transform"
+                            />
                         </div>
 
                         {/* Mobile controls */}
@@ -178,12 +176,11 @@ export default function StoreNavbar() {
                             <button onClick={() => setSearchOpen(true)} className="text-white">
                                 <Search className="w-6 h-6" />
                             </button>
-                            <Link href="/cart" className="relative text-white">
-                                <ShoppingBag className="w-6 h-6" />
-                                <span className="absolute -top-1.5 -right-2 bg-blue-600 text-white text-[10px] font-bold h-4 min-w-[16px] px-1 rounded-full flex items-center justify-center">
-                                    0
-                                </span>
-                            </Link>
+                            <CartSheet
+                                triggerClassName="text-white"
+                                iconClassName="w-6 h-6"
+                                badgeClassName="-top-1.5 -right-2"
+                            />
 
                             <Sheet>
                                 <SheetTrigger asChild>

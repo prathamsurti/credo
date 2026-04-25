@@ -2,32 +2,31 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import { useSession } from "next-auth/react";
 import { ShoppingCart, Minus, Plus, Trash2, Package, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-
-interface CartItem {
-    id: string;
-    quantity: number;
-    product: {
-        id: string;
-        name: string;
-        slug: string;
-        price: number;
-        images: string[];
-        stock: number;
-        minOrder: number;
-    };
-}
+import {
+    ClientCartItem,
+    getGuestCartItems,
+    removeGuestCartItem,
+    updateGuestCartQuantity,
+} from "@/lib/cart-client";
 
 export default function CartPage() {
-    const [items, setItems] = useState<CartItem[]>([]);
+    const { data: session } = useSession();
+    const [items, setItems] = useState<ClientCartItem[]>([]);
     const [loading, setLoading] = useState(true);
     const [updating, setUpdating] = useState<string | null>(null);
 
     const fetchCart = async () => {
         try {
+            if (!session?.user?.id) {
+                setItems(getGuestCartItems());
+                return;
+            }
+
             const res = await fetch("/api/cart");
             const data = await res.json();
             setItems(Array.isArray(data) ? data : []);
@@ -40,11 +39,17 @@ export default function CartPage() {
 
     useEffect(() => {
         fetchCart();
-    }, []);
+    }, [session?.user?.id]);
 
     const updateQuantity = async (cartItemId: string, quantity: number) => {
         setUpdating(cartItemId);
         try {
+            if (!session?.user?.id) {
+                setItems(updateGuestCartQuantity(cartItemId, quantity));
+                window.dispatchEvent(new Event("cart:updated"));
+                return;
+            }
+
             if (quantity <= 0) {
                 await fetch("/api/cart", {
                     method: "DELETE",
@@ -52,6 +57,7 @@ export default function CartPage() {
                     body: JSON.stringify({ cartItemId }),
                 });
                 setItems((prev) => prev.filter((item) => item.id !== cartItemId));
+                window.dispatchEvent(new Event("cart:updated"));
             } else {
                 await fetch("/api/cart", {
                     method: "PUT",
@@ -61,6 +67,7 @@ export default function CartPage() {
                 setItems((prev) =>
                     prev.map((item) => (item.id === cartItemId ? { ...item, quantity } : item))
                 );
+                window.dispatchEvent(new Event("cart:updated"));
             }
         } catch (err) {
             console.error("Failed to update cart:", err);
@@ -71,12 +78,19 @@ export default function CartPage() {
 
     const removeItem = async (cartItemId: string) => {
         try {
+            if (!session?.user?.id) {
+                setItems(removeGuestCartItem(cartItemId));
+                window.dispatchEvent(new Event("cart:updated"));
+                return;
+            }
+
             await fetch("/api/cart", {
                 method: "DELETE",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ cartItemId }),
             });
             setItems((prev) => prev.filter((item) => item.id !== cartItemId));
+            window.dispatchEvent(new Event("cart:updated"));
         } catch (err) {
             console.error("Failed to remove item:", err);
         }

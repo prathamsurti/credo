@@ -3,6 +3,7 @@
 import { useState, useEffect, use } from "react";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
+import { toast } from "sonner";
 import {
     ShoppingCart,
     Heart,
@@ -23,6 +24,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { addProductToGuestCart } from "@/lib/cart-client";
 
 interface Product {
     id: string;
@@ -74,21 +76,40 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
     }, [slug]);
 
     const handleAddToCart = async () => {
-        if (!session) {
-            window.location.href = `/login?callbackUrl=/products/${slug}`;
-            return;
-        }
         setAddingToCart(true);
         try {
-            await fetch("/api/cart", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ productId: product!.id, quantity }),
-            });
+            if (session?.user?.id) {
+                const res = await fetch("/api/cart", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ productId: product!.id, quantity }),
+                });
+
+                if (!res.ok) {
+                    throw new Error("Failed to add product to cart");
+                }
+            } else {
+                addProductToGuestCart(
+                    {
+                        id: product!.id,
+                        name: product!.name,
+                        slug: product!.slug,
+                        price: product!.price,
+                        images: product!.images,
+                        stock: product!.stock,
+                        minOrder: product!.minOrder,
+                    },
+                    quantity
+                );
+            }
+
             setAddedToCart(true);
+            toast.success("Added to cart");
+            window.dispatchEvent(new Event("cart:updated"));
+            window.dispatchEvent(new Event("cart:open"));
             setTimeout(() => setAddedToCart(false), 2000);
-        } catch (err) {
-            console.error("Failed to add to cart:", err);
+        } catch {
+            toast.error("Could not add this item to cart");
         } finally {
             setAddingToCart(false);
         }

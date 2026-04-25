@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Heart, ShoppingCart, Trash2, Package } from "lucide-react";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 
 interface WishlistItem {
@@ -45,14 +46,23 @@ export default function WishlistPage() {
 
     const moveToCart = async (item: WishlistItem) => {
         try {
-            await fetch("/api/cart", {
+            const res = await fetch("/api/cart", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ productId: item.product.id, quantity: 1 }),
             });
+
+            if (!res.ok) {
+                throw new Error("Failed to move item to cart");
+            }
+
             await removeItem(item.id);
+            toast.success("Moved to cart");
+            window.dispatchEvent(new Event("cart:updated"));
+            window.dispatchEvent(new Event("cart:open"));
         } catch (err) {
             console.error("Failed to move to cart:", err);
+            toast.error("Could not move item to cart");
         }
     };
 

@@ -21,7 +21,7 @@ export default auth((req) => {
     }
 
     // Protected customer routes
-    const protectedRoutes = ["/account", "/cart", "/checkout", "/wishlist"];
+    const protectedRoutes = ["/account", "/checkout", "/wishlist"];
     if (protectedRoutes.some((route) => pathname.startsWith(route))) {
         if (!isLoggedIn) {
             return NextResponse.redirect(
@@ -46,7 +46,6 @@ export const config = {
     matcher: [
         "/admin/:path*",
         "/account/:path*",
-        "/cart",
         "/checkout",
         "/wishlist",
         "/login",
